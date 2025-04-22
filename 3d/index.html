@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>山西省现代经贸学校3D全景</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        canvas { 
+            display: block; 
+            touch-action: none;
+        }
+        #container { 
+            width: 100vw; 
+            height: 100vh; 
+            position: fixed;
+        }
+        #fullscreenButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+            font-size: 16px;
+        }
+        .loading-content {
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        .loading-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .loading-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #3498db;
+            transition: width 0.3s ease;
+        }
+        .loading-text {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #ccc;
+        }
+        .loading-scene {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 顶部滚动字幕样式 */
+        #scrollingBanner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 0;
+            z-index: 1500;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #scrollingTextContainer {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #scrollingText {
+            white-space: nowrap;
+            animation: scrollText 30s linear infinite;
+            display: inline-block;
+            padding-left: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes scrollText {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        #scrollingText span {
+            margin-right: 40px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        #scrollingText span.highlight {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        #closeBanner {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+
+        #closeBanner:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            #scrollingBanner {
+                padding: 6px 0;
+            }
+            
+            #scrollingText {
+                font-size: 14px;
+            }
+
+            #closeBanner {
+                font-size: 16px;
+                width: 26px;
+                height: 26px;
+                margin-right: 5px;
+            }
+        }
+
+        /* 场景选择器样式 */
+        #sceneSelector {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            overflow-x: auto;
+            padding: 15px;
+            z-index: 1000;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            overscroll-behavior-x: contain;
+            gap: 15px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            #sceneSelector {
+                height: 100px;
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .scene-item {
+                width: 100px !important;
+                height: 70px !important;
+            }
+
+            .scene-item .scene-name {
+                font-size: 12px !important;
+                padding: 4px !important;
+            }
+        }
+
+        .scene-item {
+            flex: 0 0 auto;
+            width: 140px;
+            height: 90px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transform-origin: center center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .scene-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .scene-item:active {
+            transform: scale(0.95);
+        }
+
+        .scene-item.active {
+            border-color: #3498db;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .scene-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .scene-item .scene-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .scene-item.active .scene-name {
+            background: linear-gradient(to top, rgba(52, 152, 219, 0.9), rgba(52, 152, 219, 0));
+            padding-bottom: 10px;
+        }
+
+        .scene-item.active img {
+            filter: brightness(1.1);
+        }
+
+        /* 平面图样式 */
+        #mapContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 150px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        #mapContainer.expanded {
+            width: 80vw;
+            height: 80vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        #mapImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        #mapContainer:hover #mapImage {
+            transform: scale(1.02);
+        }
+
+        .map-marker {
+            position: absolute;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1001;
+            white-space: nowrap;
+            min-width: 40px;
+            text-align: center;
+            pointer-events: auto;
+            -webkit-tap-highlight-color: transparent;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .map-marker::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid rgba(52, 152, 219, 0.9);
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+        }
+
+        .map-marker:hover {
+            background: rgba(41, 128, 185, 0.95);
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        #markerForm {
+            position: fixed;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1002;
+            min-width: 250px;
+        }
+
+        #markerForm input,
+        #markerForm select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        #markerForm button {
+            padding: 8px 16px;
+            margin: 8px 8px 0 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        #saveMarker {
+            background: #3498db;
+            color: white;
+        }
+
+        #saveMarker:hover {
+            background: #2980b9;
+        }
+
+        #cancelMarker {
+            background: #e74c3c;
+            color: white;
+        }
+
+        #cancelMarker:hover {
+            background: #c0392b;
+        }
+
+        #closeMapBtn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            z-index: 1001;
+            font-size: 24px;
+            line-height: 36px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        #closeMapBtn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        #mapContainer.expanded #closeMapBtn {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            #mapContainer {
+                width: 120px;
+                height: 80px;
+                top: 10px;
+                right: 10px;
+            }
+
+            #mapContainer.expanded {
+                width: 95vw;
+                height: 90vh;
+                max-width: none;
+                max-height: none;
+            }
+
+            .map-marker {
+                padding: 4px 8px;
+                font-size: 10px;
+                min-width: 30px;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+
+            .map-marker:hover {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            .map-marker::before {
+                bottom: -4px;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 4px solid rgba(52, 152, 219, 0.9);
+            }
+
+            #closeMapBtn {
+                width: 44px;
+                height: 44px;
+                font-size: 28px;
+                line-height: 44px;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* 开场动画样式 */
+        #introAnimation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            opacity: 1;
+            transition: opacity 1.5s ease;
+        }
+
+        .intro-logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: logoAppear 1.5s ease forwards;
+        }
+
+        .intro-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: textAppear 1.5s ease forwards 0.5s;
+        }
+
+        .intro-subtitle {
+            font-size: 18px;
+            color: #999;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: textAppear 1.5s ease forwards 1s;
+            margin-bottom: 40px;
+        }
+
+        .intro-progress-container {
+            width: 80%;
+            max-width: 400px;
+            opacity: 0;
+            animation: textAppear 1.5s ease forwards 1.5s;
+        }
+
+        .intro-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .intro-progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .intro-progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        @keyframes logoAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes textAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="introAnimation">
+        <img src="./logo.png" alt="学校标志" class="intro-logo">
+        <h1 class="intro-title">山西省现代经贸学校</h1>
+        <p class="intro-subtitle">欢迎参观我校3D全景展示</p>
+        <div class="intro-progress-container">
+            <div class="intro-progress-bar">
+                <div class="intro-progress-fill"></div>
+            </div>
+            <div class="intro-progress-text">正在加载场景...</div>
+        </div>
+    </div>
+    
+    <!-- 顶部滚动字幕 -->
+    <div id="scrollingBanner">
+        <div id="closeBanner">×</div>
+        <div id="scrollingTextContainer">
+            <div id="scrollingText">
+                <span>欢迎参观山西省现代经贸学校3D全景</span>
+                <span class="highlight">学校地址:太原市万柏林区西铭路玉兰大道</span>
+                <span>咨询热线: 0351-4422316</span>
+                <span class="highlight">优质教育资源，助力学生成长</span>
+                <span>微信公众号: xdjm316</span>
+                <span class="highlight">此网页由山西省现代经贸学校 23J193班 杨政宇同学制作</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="container"></div>
+    <button id="fullscreenButton">全屏</button>
+    <div id="sceneSelector"></div>
+    <div id="mapContainer">
+        <img id="mapImage" src="./map.jpg" alt="校园平面图">
+        <button id="closeMapBtn">×</button>
+    </div>
+    <div id="markerForm">
+        <input type="text" id="markerText" placeholder="输入标记文字">
+        <select id="markerScene">
+            <option value="">选择跳转场景</option>
+            <option value="scene1">校门口</option>
+            <option value="scene2">操场</option>
+            <option value="scene3">教学楼</option>
+            <option value="scene4">餐厅门口</option>
+            <option value="scene5">水果店</option>
+            <option value="scene6">餐厅</option>
+        </select>
+        <button id="saveMarker">保存</button>
+        <button id="cancelMarker">取消</button>
+    </div>
+    <div id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+            </div>
+            <div class="loading-text">正在加载场景...</div>
+            <div class="loading-scene"></div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="panorama.js"></script>
+    <script>
+        // 滚动字幕控制
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollingBanner = document.getElementById('scrollingBanner');
+            const scrollingText = document.getElementById('scrollingText');
+            const scrollingTextContainer = document.getElementById('scrollingTextContainer');
+            const closeBanner = document.getElementById('closeBanner');
+            
+            // 计算动画持续时间（基于文本长度）
+            function updateScrollDuration() {
+                const textWidth = scrollingText.offsetWidth;
+                const viewportWidth = window.innerWidth;
+                const baseDuration = 30; // 基础持续时间（秒）
+                
+                // 文本内容越长，持续时间越长
+                const calculatedDuration = baseDuration * (textWidth / viewportWidth) * 0.5;
+                const duration = Math.max(15, Math.min(calculatedDuration, 60)); // 最小15秒，最大60秒
+                
+                scrollingText.style.animationDuration = `${duration}s`;
+            }
+            
+            // 初始化和窗口大小改变时更新
+            updateScrollDuration();
+            window.addEventListener('resize', updateScrollDuration);
+            
+            // 添加暂停/继续功能
+            scrollingTextContainer.addEventListener('mouseenter', () => {
+                scrollingText.style.animationPlayState = 'paused';
+            });
+            
+            scrollingTextContainer.addEventListener('mouseleave', () => {
+                scrollingText.style.animationPlayState = 'running';
+            });
+            
+            // 关闭按钮功能
+            closeBanner.addEventListener('click', () => {
+                // 添加淡出动画
+                scrollingBanner.style.opacity = '0';
+                
+                // 动画完成后隐藏元素
+                setTimeout(() => {
+                    scrollingBanner.style.display = 'none';
+                    
+                    // 保存用户偏好到本地存储
+                    localStorage.setItem('bannerClosed', 'true');
+                    // 记录关闭时间
+                    localStorage.setItem('bannerClosedTime', new Date().getTime().toString());
+                }, 300); // 300毫秒等于CSS过渡时间
+            });
+            
+            // 每隔15分钟自动显示一次字幕（如果用户手动关闭过）
+            const BANNER_SHOW_INTERVAL = 15 * 60 * 1000; // 15分钟
+            
+            // 定时检查是否应该重新显示字幕
+            setInterval(() => {
+                const lastClosedTime = parseInt(localStorage.getItem('bannerClosedTime') || '0');
+                const currentTime = new Date().getTime();
+                
+                // 如果已经过了指定时间间隔，重新显示字幕
+                if (scrollingBanner.style.display === 'none' && 
+                    (currentTime - lastClosedTime) > BANNER_SHOW_INTERVAL) {
+                    scrollingBanner.style.opacity = '0';
+                    scrollingBanner.style.display = 'flex';
+                    
+                    // 使用setTimeout确保过渡效果生效
+                    setTimeout(() => {
+                        scrollingBanner.style.opacity = '1';
+                    }, 10);
+                }
+            }, 60000); // 每分钟检查一次
+            
+            // 处理字幕的过渡效果
+            scrollingBanner.style.transition = 'opacity 0.3s ease';
+            
+            // 确保字幕正确显示在全景加载完成后
+            window.addEventListener('load', () => {
+                // 稍微延迟以确保所有元素都加载完成
+                setTimeout(() => {
+                    // 重新计算滚动持续时间
+                    updateScrollDuration();
+                    
+                    // 确保字幕可见（如果用户没有关闭）
+                    if (!isBannerClosed) {
+                        scrollingBanner.style.opacity = '1';
+                    }
+                }, 500);
+            });
+            
+            // 监听全屏切换，确保字幕在全屏模式下也正确显示
+            document.addEventListener('fullscreenchange', updateScrollDuration);
+            document.addEventListener('webkitfullscreenchange', updateScrollDuration);
+            document.addEventListener('mozfullscreenchange', updateScrollDuration);
+            document.addEventListener('MSFullscreenChange', updateScrollDuration);
+        });
+    </script>
+</body>
+</html> 
