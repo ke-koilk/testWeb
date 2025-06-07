@@ -1,7 +1,7 @@
 class PanoramaViewer {
     constructor() {
         // 检查是否允许调试（只允许在本地文件访问时调试）
-        this.isDebugAllowed = window.location.protocol === 'file:';
+        this.isDebugAllowed = window.location.protocol === 'file';
         
         // 标记配置
         this.defaultMarkers = [
@@ -109,7 +109,7 @@ class PanoramaViewer {
                 image: './cj/2.jpg',
                 arrows: [
                     {
-                        position: { x: -450, y: -160, z: -15 },
+                        position: { x: 25, y: -160, z: 900 },
                         rotation: { x: 0.00, y: -2.77, z: -1.60 },
                         scale: {
                             x: 1.00,
@@ -125,8 +125,8 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: -280, y: -145, z: 335 },
-                        rotation: { x: -0.10, y: 3.15, z: 3.80 },
+                        position: { x: 710, y: -145, z: 605 },
+                        rotation: { x: 0.10, y: 3.15, z: 3.80 },
                         scale: {
                             x: 0.90,
                             y: 1.00,
@@ -141,8 +141,8 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: -5, y: -165, z: -440 },
-                        rotation: { x: 0.10, y: 3.15, z: 0.00 },
+                        position: { x: -330, y: -165, z: -5 },
+                        rotation: { x: 0.10, y: 3.15, z: -1.60 },
                         scale: {
                             x: 0.70,
                             y: 0.80,
@@ -157,11 +157,11 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: 385, y: -120, z: -110 },
+                        position: { x: -95, y: -120, z: -455 },
                         rotation: { 
-                            x: 0.10,
-                            y: -0.33,
-                            z: 4.80
+                            x: 0.20,
+                            y: 0.07,
+                            z: 6.40
                         },
                         scale: {
                             x: 0.80,
@@ -177,12 +177,12 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: 405, y: -55, z: 280 },
-                        rotation: { x: 1.50, y: -1.35, z: -0.20 },
+                        position: { x: 260, y: -5, z: -300 },
+                        rotation: { x: 1.50, y: -0.85, z: -6.30 },
                         scale: {
-                            x: 1.00,
-                            y: 0.30,
-                            z: 1.00
+                            x: 0.90,
+                            y: 0.50,
+                            z: 0.90
                         },
                         text: '快递柜',
                         target: 'scene2',
@@ -191,9 +191,9 @@ class PanoramaViewer {
                             pc: 255,
                             mobile: 100
                         }
-                    }
-                ]
-            },
+                    },
+             ]
+         },
             'scene3': {//教学楼
                 image: './cj/3.jpg',
                 arrows: [
@@ -205,8 +205,8 @@ class PanoramaViewer {
                             y: 1.00,
                             z: 1.00
                         },
-                        text: '招办',
-                        target: 'scene2',
+                        text: '会议室',
+                        target: 'scene16',
                         arrowStyle: '1',  // 使用 1.png
                         fontSize: {  // 添加字体大小配置
                             pc: 255,
@@ -398,11 +398,11 @@ class PanoramaViewer {
                 image: './cj/7.jpg',
                 arrows: [
                     {
-                        position: { x: -280, y: -120, z:-145 },
+                        position: { x: 380, y: -110, z:245 },
                         rotation: { 
-                            x: 0.10,
-                            y: 0.17,
-                            z: 7.80
+                            x: -0.20,
+                            y: -0.23,
+                            z: 11.00
                         },
                         scale: {
                             x: 1.00,
@@ -418,11 +418,11 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: -290, y: -120, z:70 },
+                        position: { x: 455, y: -120, z:-130 },
                         rotation: { 
                             x: -0.10,
-                            y: 0.17,
-                            z: 1.60,
+                            y: -0.43,
+                            z: 4.80,
                         },
                         scale: {
                             x: 0.80,
@@ -438,11 +438,11 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: -360, y: -155, z:260 },
+                        position: { x: 350, y: -100, z:-295 },
                         rotation: { 
-                            x: -0.20,
-                            y: 0.17,
-                            z: 1.70
+                            x: 0.20,
+                            y: -3.43,
+                            z: 1.30
                         },
                         scale: {
                             x: 1.00,
@@ -458,11 +458,11 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: 345, y: -175, z:20 },
+                        position: { x: -465, y: -145, z:75 },
                         rotation: { 
-                            x: -0.10,
-                            y: -0.23,
-                            z: 4.70
+                            x: 0.00,
+                            y: 0.27,
+                            z: 7.90
                         },
                         scale: {
                             x: 1.00,
@@ -478,16 +478,16 @@ class PanoramaViewer {
                         }
                     },
                     {
-                        position: { x: 300, y: -175, z:325 },
+                        position: { x: -310, y: -105, z: -315 },
                         rotation: { 
-                            x: -0.20,
-                            y: -0.23,
-                            z: 3.20
+                            x: 5.40,
+                            y: 37.27,
+                            z: 10.30
                         },
                         scale: {
-                            x: 1.00,
-                            y: 1.00,
-                            z: 1.00
+                            x: 1.20,
+                            y: 1.20,
+                            z: 1.20
                         },
                         text: '前往2区',
                         target: 'scene11',
@@ -668,10 +668,84 @@ class PanoramaViewer {
                         }
                     }
                 ]
-            }
-        };
-        this.currentScene = 'scene1';
+            },
+			'scene14':{//宿舍
+				image: './cj/14.jpg',
+				arrows:[
+					{
+					position: { x: 185, y: -160, z: -75 },
+					rotation: { x: 0.00, y : -3.27, z: -4.70},
+					scale: {
+					    x: 1.00,
+					    y: 0.80,
+					    z: 1.00
+					},
+					text: '操场',
+					target: 'scene2',
+					arrowStyle: '1',  // 使用 1.png
+					fontSize: {  // 添加字体大小配置
+					    pc: 255,
+					    mobile: 100
+					}
+					
+				},
+			]
+		},
+		'scene15': {//机房
+		    image: './cj/15.jpg',
+		    arrows: [
+		        {
+		            position: { x: 310 , y: -210, z: 250 },
+		            rotation: { 
+		                x: 0.00,
+		                y: -0.23,
+		                z: 3.70
+		            },
+		            scale: {
+		                x: 1.30,
+		                y: 1.80,
+		                z: 1.30
+		            },
+		            text: '实训区',
+		            target: 'scene7',
+		            arrowStyle: '1',  // 使用 1.png
+		            fontSize: {  // 添加字体大小配置
+		                pc: 255,
+		                mobile: 100
+		            }
+		        },
+		    ]
+		},
+		'scene16': {//会议室
+		    image: './cj/16.jpg',
+		    arrows: [
+		        {
+		            position: { x:-290, y: -210, z: 0 },
+		            rotation: { 
+		                x: -0.20,
+		                y: -0.03,
+		                z: 1.10
+					
+		            },
+		            scale: {
+		                x: 1.30,
+		                y: 1.80,
+		                z: 1.30
+		            },
+		            text: '教学楼',
+		            target: 'scene3',
+		            arrowStyle: '1',  // 使用 1.png
+		            fontSize: {  // 添加字体大小配置
+		                pc: 255,
+		                mobile: 100
+					}
+				},
+			]
+        }
+	};
+		this.currentScene = 'scene1';
     }
+
 
     // 开始预加载
     startPreloading() {
@@ -947,7 +1021,10 @@ class PanoramaViewer {
             'scene10': '汽修实训室',
             'scene11': '实训室2区',
             'scene12':'中餐实训室',
-            'scene13':'上操场'
+            'scene13':'上操场',
+			'scene14':'宿舍',
+			'scene15':'机房',
+			'scene16':'会议室'
         };
 
         // 为每个场景创建缩略图
@@ -2085,6 +2162,7 @@ class PanoramaViewer {
                     <option value="scene11">实训室2区</option>
                     <option value="scene9">中餐实训室</option>
                     <option value="scene9">上操场</option>
+					<option value="scene14">宿舍</option>
                 </select>
             </div>
             <div style="display: flex; gap: 10px;">
