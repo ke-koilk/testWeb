@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人身份卡</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>个人身份卡</h1>
+        
+        <!-- 登录界面 -->
+        <div id="loginSection" class="login-section">
+            <h2>用户登录</h2>
+            <div class="login-form">
+                <input type="text" id="nameInput" placeholder="请输入姓名">
+                <input type="text" id="idInput" placeholder="请输入学号">
+                <button id="loginBtn">登录</button>
+                <p id="loginError" class="error-message"></p>
+            </div>
+        </div>
+        
+        <!-- 身份卡界面 -->
+        <div id="cardSection" class="card-section hidden">
+            <div class="token-card" id="tokenCard">
+                <div class="avatar-container">
+                    <img id="avatar" src="placeholder.png" alt="用户头像">
+                </div>
+                <div class="user-info">
+                    <h2 id="userName">加载中...</h2>
+                    <p>学号: <span id="userStudentId">加载中...</span></p>
+                    <p>班级: <span id="userClass">加载中...</span></p>
+                    <p>用户编号: <span id="userId">加载中...</span></p>
+                    <p>所属部门: <span id="userDepartment">加载中...</span></p>
+                </div>
+                <div class="qr-container">
+                    <img id="qrCode" src="" alt="身份二维码">
+                </div>
+            </div>
+            <button id="logoutBtn" class="logout-btn">退出登录</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
